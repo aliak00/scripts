@@ -10,15 +10,33 @@
 #   3) Creates a hello world applications in examples that uses the sample function
 #   4) Creates a cmake script, and then runs it and builds the hello world app 
 
-if [ -z "$1" ]; then
-    echo "usage: $(basename "$0") <project-name>"
-    exit 1
-fi
+show_help() {
+    echo "usage: $(basename "$0") [g] project-name"
+}
 
+gen_ycm=0
+
+while getopts "hg" opt; do
+    case "$opt" in
+    h|\?)
+        show_help
+        exit 0
+        ;;
+    g)  gen_ycm=1
+        ;;
+    esac
+done
+
+shift $(($OPTIND - 1))
 PROJECT_NAME=$1
 
 if [ -d "$PROJECT_NAME" ]; then
     echo "Directory named '$PROJECT_NAME' already exists"
+    exit 1
+fi
+
+if [ -z "$PROJECT_NAME" ]; then
+    show_help
     exit 1
 fi
 
@@ -105,4 +123,10 @@ git add src/lib.cpp
 git add include/$PROJECT_NAME/lib.hpp
 git add examples/hello.cpp
 git commit -am "Initial commit"
+
+if [ $gen_ycm -eq 1 ]; then
+    echo Generating YCM config with YCM-Generator
+    python ~/.vim/bundle/YCM-Generator/config_gen.py build
+    mv build/.ycm_extra_conf.py .ycm_extra_conf
+fi
 
