@@ -87,3 +87,22 @@ EOF
 
 cmake "$PROJECT_NAME/build/CMakeLists.txt"
 make -C "$PROJECT_NAME/build"
+
+cd $PROJECT_NAME
+git init
+
+cat > .gitignore << EOF
+lib/
+bin/
+build/
+!build/CMakeLists.txt
+
+.DS_Store
+EOF
+
+git add .gitignore
+git add src/lib.cpp
+git add include/$PROJECT_NAME/lib.hpp
+git add examples/hello.cpp
+git commit -am "Initial commit"
+
