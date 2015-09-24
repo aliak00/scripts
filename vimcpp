@@ -54,8 +54,8 @@ EOF
 cat > $EXAMPLES_DIR/hello.cpp << EOF
 #include "$PROJECT_NAME/lib.hpp"
 int main(int argc, char **argv) {
-  lib();
-  return 0;
+    lib();
+    return 0;
 }
 EOF
 
