@@ -55,8 +55,13 @@ mkdir $INCLUDE_DIR/$PROJECT_NAME
 cat > $SRC_DIR/lib.cpp << EOF
 #include <iostream>
 #include "$PROJECT_NAME/lib.hpp"
+
+namespace $PROJECT_NAME {
+
 void lib() {
-    std::cout << "Hello $PROJECT_NAME" << std::endl;
+    std::cout << "Hello from $PROJECT_NAME::lib" << std::endl;
+}
+
 }
 EOF
 
@@ -64,7 +69,11 @@ cat > $INCLUDE_DIR/$PROJECT_NAME/lib.hpp << EOF
 #ifndef ${PROJECT_NAME}_LIB_HPP
 #define ${PROJECT_NAME}_LIB_HPP
 
+namespace $PROJECT_NAME {
+
 void lib();
+
+}
 
 #endif
 EOF
@@ -72,7 +81,7 @@ EOF
 cat > $EXAMPLES_DIR/hello.cpp << EOF
 #include "$PROJECT_NAME/lib.hpp"
 int main(int argc, char **argv) {
-    lib();
+    $PROJECT_NAME::lib();
     return 0;
 }
 EOF
