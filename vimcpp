@@ -65,9 +65,11 @@ void lib() {
 }
 EOF
 
+HEADER_GUARD="$(echo $PROJECT_NAME | tr '[:lower:]' '[:upper:]')_LIB_HPP"
+
 cat > $INCLUDE_DIR/$PROJECT_NAME/lib.hpp << EOF
-#ifndef ${PROJECT_NAME}_LIB_HPP
-#define ${PROJECT_NAME}_LIB_HPP
+#ifndef $HEADER_GUARD
+#define $HEADER_GUARD
 
 namespace $PROJECT_NAME {
 
