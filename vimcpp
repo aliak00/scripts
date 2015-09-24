@@ -136,6 +136,6 @@ git commit -am "Initial commit"
 if [ $gen_ycm -eq 1 ]; then
     echo Generating YCM config with YCM-Generator
     python ~/.vim/bundle/YCM-Generator/config_gen.py build
-    mv build/.ycm_extra_conf.py .ycm_extra_conf
+    mv build/.ycm_extra_conf.py .ycm_extra_conf.py
 fi
 
