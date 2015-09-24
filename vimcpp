@@ -39,7 +39,7 @@ cat > $SRC_DIR/lib.cpp << EOF
 #include "$PROJECT_NAME/lib.hpp"
 void lib() {
     std::cout << "Hello $PROJECT_NAME" << std::endl;
-} 
+}
 EOF
 
 cat > $INCLUDE_DIR/$PROJECT_NAME/lib.hpp << EOF
