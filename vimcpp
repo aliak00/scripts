@@ -11,18 +11,21 @@
 #   4) Creates a cmake script, and then runs it and builds the hello world app 
 
 show_help() {
-    echo "usage: $(basename "$0") [g] project-name"
+    echo "usage: $(basename "$0") [gb] project-name"
 }
 
 gen_ycm=0
+use_boost=0
 
-while getopts "hg" opt; do
+while getopts "hbg" opt; do
     case "$opt" in
     h|\?)
         show_help
         exit 0
         ;;
     g)  gen_ycm=1
+        ;;
+    b)  use_boost=1
         ;;
     esac
 done
@@ -88,12 +91,24 @@ int main(int argc, char **argv) {
 }
 EOF
 
+
+if [ $use_boost -eq 1 ]; then
+    BOOST_CMAKE_SETTINGS="
+set(Boost_USE_STATIC_LIBS OFF)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
+include_directories(\${Boost_INCLUDE_DIRS})
+"
+fi
+
 cat > $BUILD_DIR/CMakeLists.txt << EOF
 cmake_minimum_required(VERSION 2.6)
 project($PROJECT_NAME)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "../bin")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "../lib")
+
+$BOOST_CMAKE_SETTINGS
 
 # Add library sources here
 set(${PROJECT_NAME}_SRC_DIR ../src)
