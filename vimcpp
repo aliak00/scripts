@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This scripts takes a project name and then does the following:
 #   1) Creates a directory structure that looks like
