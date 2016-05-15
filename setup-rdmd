@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+# Compiles rdmd.d and moves it over to whatever bin directory you specify
+
+show_help() {
+    echo "usage: $(basename "$0") rdmd-location bin-location"
+}
+
+RDMD_LOCAITON=$1
+BIN_LOCATION=$2
+
+if [ -z $RDMD_LOCAITON ]; then
+    show_help
+    exit 1
+fi
+
+if [ -z $BIN_LOCATION ]; then
+    show_help
+    exit 1
+fi
+
+if [ ! -d $RDMD_LOCAITON ]; then
+  echo "rdmd location $RDMD_LOCAITON doesn't seem to exist"
+  show_help
+  exit 1
+fi
+
+if [ ! -d $BIN_LOCATION ]; then
+  echo "bin location $BIN_LOCATION doesn't seem to exist"
+  show_help
+  exit 1
+fi
+
+if [ ! -f $RDMD_LOCAITON/rdmd.d ]; then
+    echo "rdmd.d not found in $RDMD_LOCAITON"
+  	show_help
+  	exit 1
+fi
+
+TEMP_FOLDER=".rdmd-object-tmp"
+
+echo "compiling to $BIN_LOCATION/rdmd"
+ldc2 -od $TEMP_FOLDER -of $BIN_LOCATION/rdmd $RDMD_LOCAITON/rdmd.d
+rm -rf $TEMP_FOLDER
+echo "done"
