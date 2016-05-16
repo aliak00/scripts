@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+show_help() {
+    echo "usage: $(basename "$0") [v] project-name"
+}
+
+use_vibe=0
+
+while getopts "hv" opt; do
+    case "$opt" in
+    h|\?)
+        show_help
+        exit 0
+        ;;
+    v)  use_vibe=1
+        ;;
+    esac
+done
+
+shift "$(($OPTIND - 1))"
+PROJECT_NAME=$1
+
+if [ -d "$PROJECT_NAME" ]; then
+    echo "Directory named '$PROJECT_NAME' already exists"
+    exit 1
+fi
+
+if [ -z "$PROJECT_NAME" ]; then
+    show_help
+    exit 1
+fi
+
+if [ $use_vibe -eq 1 ]; then
+    VIBE_D="-t vibe.d"
+fi
+
+dub init -f json $VIBE_D $PROJECT_NAME
+
+cat > $PROJECT_NAME/.editorconfig << EOF
+root = true
+
+[*.d]
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+charset = utf-8
+max_line_length = 120
+
+dfmt_brace_style = otbs
+dfmt_soft_max_line_length = 80
+EOF
+
+echo ".editorconfig" >> $PROJECT_NAME/.gitignore
