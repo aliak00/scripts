@@ -30,7 +30,7 @@ while getopts "hbg" opt; do
     esac
 done
 
-shift $(($OPTIND - 1))
+shift "$(($OPTIND - 1))"
 PROJECT_NAME=$1
 
 if [ -d "$PROJECT_NAME" ]; then
