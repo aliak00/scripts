@@ -50,5 +50,3 @@ max_line_length = 120
 dfmt_brace_style = otbs
 dfmt_soft_max_line_length = 80
 EOF
-
-echo ".editorconfig" >> $PROJECT_NAME/.gitignore
