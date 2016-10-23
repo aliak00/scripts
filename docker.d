@@ -25,6 +25,12 @@ Tuple!(string[], string[]) parseCommandLine(string[] args) {
     return tuple(empty, empty);
 }
 
+void execute(string command) {
+    writeln("Executing command: ", command);
+    auto result = executeShell(command);
+    writeln(result.output);
+}
+
 void deleteContainers(string[] args) {
     bool force = false;
     auto getoptResult = getopt(
@@ -45,16 +51,12 @@ void deleteContainers(string[] args) {
     }
 
     auto command = "docker rm %s $(%s)".format(forceOption, findContainers);
-    writeln("Executing command: ", command);
-    auto result = executeShell(command);
-    writeln(result.output);
+    execute(command);
 }
 
 void deleteDanglingImages(string[] args) {
     auto command = "docker rmi $(docker images -q -f dangling=true)";
-    writeln("Executing command: ", command);
-    auto result = executeShell(command);
-    writeln(result.output);
+    execute(command);
 }
 
 int main(string[] args) {
