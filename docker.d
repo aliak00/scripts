@@ -2,29 +2,6 @@
 
 import std.stdio, std.getopt, std.string, std.typecons, std.process, std.algorithm;
 
-bool looksLikeCommand(string arg) {
-    return arg.indexOf("--") != 0
-        && arg.indexOf("-") != 0;
-}
-
-Tuple!(string[], string[]) parseCommandLine(string[] args) {
-    string[] empty = [];
-    if (args.length == 0) {
-        return tuple(empty, empty);
-    }
-    for (int i = 1; i < args.length; ++i) {
-        string arg = args[i];
-        if (arg.looksLikeCommand) {
-            bool hasNext = i + 1 < args.length;
-            if (hasNext && args[i + 1].looksLikeCommand) {
-                continue;
-            }
-            return tuple(args[1..i], args[i..args.length]);
-        }
-    }
-    return tuple(empty, empty);
-}
-
 void execute(string command) {
     writeln("Executing command: ", command);
     auto result = executeShell(command);
@@ -59,19 +36,53 @@ void deleteDanglingImages(string[] args) {
     execute(command);
 }
 
+// cmd1 -o1 -o2 cmd2 -o3 --o4 val1 cmd3 cmd4 --x val2
+
+string[][] cmdopts(string args[]) {
+    string[] groupedArgs = [];
+    string[][] commandGroups = [][];
+    for (int i = 0; i < args.length; ++i) {
+        bool isCommand = args[i].indexOf("-") != 0;
+        if (isCommand) {
+            bool prevArgExpectsValue = i > 0 && args[i - 1].indexOf("--") == 0;
+            if (prevArgExpectsValue) {
+                isCommand = false;
+            }
+        }
+        if (isCommand) {
+            if (groupedArgs.length) {
+                commandGroups ~= groupedArgs;
+            }
+            groupedArgs = [args[i]];
+            continue;
+        }
+        groupedArgs ~= args[i];
+    }
+    if (groupedArgs.length) {
+        commandGroups ~= groupedArgs;
+    }
+    return commandGroups;
+}
+
 int main(string[] args) {
-    auto data = parseCommandLine(args);
-    if (data[1].length == 0) {
-        writeln("Expected a command");
+    auto commandGroups = cmdopts(args);
+    if (commandGroups.length > 2) {
+        writeln("Too many commands found");
+        return 1;
+    }
+    if (commandGroups.length < 2) {
+        writeln("Expected command");
         return 1;
     }
 
-    switch (data[1][0]) {
+    auto command = commandGroups[1][0];
+    auto commandArgs = commandGroups[1];
+    switch (command) {
         case "delete-containers":
-            deleteContainers(data[1]);
+            deleteContainers(commandArgs);
             break;
         case "delete-dangling":
-            deleteDanglingImages(data[1]);
+            deleteDanglingImages(commandArgs);
         default:
             writeln("Invalid command");
             return 1;
