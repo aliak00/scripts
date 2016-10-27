@@ -76,7 +76,26 @@ CommandGroup[] cmdopts(string args[]) {
     return commandGroups;
 }
 
+unittest {
+    auto args = ["cmd1", "-o1", "-o2", "cmd2", "-o3", "--o4", "val1", "cmd3", "cmd4", "--x", "val2"];
+    auto groups = cmdopts(args);
+    assert(groups.length == 4);
+    assert(groups[0].command == "cmd1");
+    assert(groups[1].command == "cmd2");
+    assert(groups[2].command == "cmd3");
+    assert(groups[3].command == "cmd4");
+    assert(groups[0].args.length == 3);
+    assert(groups[1].args.length == 4);
+    assert(groups[2].args.length == 1);
+    assert(groups[3].args.length == 3);
+}
+
 int main(string[] args) {
+    version (unittest) {
+        writeln("tests passed");
+        return 1;
+    }
+
     auto commandGroups = cmdopts(args);
     if (commandGroups.length > 2) {
         writeln("Too many commands found");
