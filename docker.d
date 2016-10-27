@@ -60,17 +60,13 @@ CommandGroup[] parseCommandGroups(string args[]) {
     for (int argIndex = 1, commandIndex = 0; argIndex < args.length; ++argIndex) {
         auto arg = args[argIndex];
         bool isCommand = arg.indexOf("-") != 0;
-        if (isCommand) {
-            bool prevArgExpectsValue = argIndex > 0 && args[argIndex - 1].indexOf("--") == 0;
-            if (prevArgExpectsValue) {
-                isCommand = false;
-            } else {
-                commandGroups ~= CommandGroup(arg);
-                commandIndex++;
-                continue;
-            }
+        bool prevArgExpectsValue = argIndex > 0 && args[argIndex - 1].indexOf("--") == 0;
+        if (!isCommand || prevArgExpectsValue) {
+            commandGroups[commandIndex].args ~= arg;
+            continue;
         }
-        commandGroups[commandIndex].args ~= arg;
+        commandGroups ~= CommandGroup(arg);
+        commandIndex++;
     }
     return commandGroups;
 }
