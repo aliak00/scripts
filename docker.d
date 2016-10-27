@@ -17,6 +17,7 @@ void deleteContainers(string[] args) {
 
     if (getoptResult.helpWanted) {
         defaultGetoptPrinter("delete-containers expects:", getoptResult.options);
+        return;
     }
 
     auto findContainers = "docker ps -q -a";
