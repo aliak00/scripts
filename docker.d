@@ -48,20 +48,13 @@ struct CommandGroup {
 }
 
 CommandGroup[] parseCommandGroups(string args[]) {
-    if (args.length == 0) {
-        return [];
-    }
-
-    if (args[0].length == 0 || args[0][0] == '-') {
-        return [];
-    }
-
+    assert(args.length > 0 && args[0].length > 0 || args[0][0] != '-');
     CommandGroup[] commandGroups = [CommandGroup(args[0])];
     for (int argIndex = 1, commandIndex = 0; argIndex < args.length; ++argIndex) {
         auto arg = args[argIndex];
-        bool isCommand = arg.indexOf("-") != 0;
+        bool isArg = arg.indexOf("-") == 0;
         bool prevArgExpectsValue = argIndex > 0 && args[argIndex - 1].indexOf("--") == 0;
-        if (!isCommand || prevArgExpectsValue) {
+        if (isArg || prevArgExpectsValue) {
             commandGroups[commandIndex].args ~= arg;
             continue;
         }
