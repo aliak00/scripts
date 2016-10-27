@@ -37,41 +37,40 @@ void deleteDanglingImages(string[] args) {
     execute(command);
 }
 
-// cmd1 -o1 -o2 cmd2 -o3 --o4 val1 cmd3 cmd4 --x val2
-
 struct CommandGroup {
     string[] args;
     string command;
+
+    this(string command) {
+        this.command = command;
+        this.args = [command];
+    }
 }
 
 CommandGroup[] parseCommandGroups(string args[]) {
-    string[] groupedArgs = [];
-    CommandGroup[] commandGroups;
-    for (int i = 0; i < args.length; ++i) {
-        bool isCommand = args[i].indexOf("-") != 0;
+    if (args.length == 0) {
+        return [];
+    }
+
+    if (args[0].length == 0 || args[0][0] == '-') {
+        return [];
+    }
+
+    CommandGroup[] commandGroups = [CommandGroup(args[0])];
+    for (int argIndex = 1, commandIndex = 0; argIndex < args.length; ++argIndex) {
+        auto arg = args[argIndex];
+        bool isCommand = arg.indexOf("-") != 0;
         if (isCommand) {
-            bool prevArgExpectsValue = i > 0 && args[i - 1].indexOf("--") == 0;
+            bool prevArgExpectsValue = argIndex > 0 && args[argIndex - 1].indexOf("--") == 0;
             if (prevArgExpectsValue) {
                 isCommand = false;
+            } else {
+                commandGroups ~= CommandGroup(arg);
+                commandIndex++;
+                continue;
             }
         }
-        if (isCommand) {
-            if (groupedArgs.length) {
-                CommandGroup cg;
-                cg.args = groupedArgs;
-                cg.command = groupedArgs[0];
-                commandGroups ~= cg;
-            }
-            groupedArgs = [args[i]];
-            continue;
-        }
-        groupedArgs ~= args[i];
-    }
-    if (groupedArgs.length) {
-        CommandGroup cg;
-        cg.args = groupedArgs;
-        cg.command = groupedArgs[0];
-        commandGroups ~= cg;
+        commandGroups[commandIndex].args ~= arg;
     }
     return commandGroups;
 }
