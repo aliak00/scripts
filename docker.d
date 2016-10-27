@@ -53,7 +53,7 @@ CommandGroup[] parseCommandGroups(string args[]) {
     for (int argIndex = 1, commandIndex = 0; argIndex < args.length; ++argIndex) {
         auto arg = args[argIndex];
         bool isArg = arg.indexOf("-") == 0;
-        bool prevArgExpectsValue = argIndex > 0 && args[argIndex - 1].indexOf("--") == 0;
+        bool prevArgExpectsValue = args[argIndex - 1].indexOf("--") == 0;
         if (isArg || prevArgExpectsValue) {
             commandGroups[commandIndex].args ~= arg;
             continue;
