@@ -95,7 +95,7 @@ unittest {
 int main(string[] args) {
     version (unittest) {
         writeln("tests passed");
-        return 1;
+        return 0;
     }
 
     auto commandGroups = parseCommandGroups(args);
