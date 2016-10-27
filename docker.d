@@ -41,19 +41,20 @@ struct CommandGroup {
     string[] args;
     string command;
 
-    this(string command) {
+    this(string command) pure {
         this.command = command;
         this.args = [command];
     }
 }
 
-CommandGroup[] parseCommandGroups(string args[]) {
+CommandGroup[] parseCommandGroups(string args[]) pure {
     assert(args.length > 0 && args[0].length > 0 || args[0][0] != '-');
     CommandGroup[] commandGroups = [CommandGroup(args[0])];
     for (int argIndex = 1, commandIndex = 0; argIndex < args.length; ++argIndex) {
-        auto arg = args[argIndex];
-        bool isArg = arg.indexOf("-") == 0;
-        bool prevArgExpectsValue = args[argIndex - 1].indexOf("--") == 0;
+        const auto arg = args[argIndex];
+        const auto prevArg = args[argIndex - 1];
+        const bool isArg = arg.indexOf("-") == 0;
+        const bool prevArgExpectsValue = prevArg.indexOf("--") == 0 && prevArg.indexOf('=') == -1;
         if (isArg || prevArgExpectsValue) {
             commandGroups[commandIndex].args ~= arg;
             continue;
@@ -77,6 +78,19 @@ unittest {
     assert(groups[2].args.length == 1);
     assert(groups[3].args.length == 3);
 }
+
+unittest {
+    auto args = ["c1", "--p1=v1", "--p2", "v2", "c2", "--p3=v3", "c3"];
+    auto groups = parseCommandGroups(args);
+    assert(groups.length == 3);
+    assert(groups[0].command == "c1");
+    assert(groups[1].command == "c2");
+    assert(groups[2].command == "c3");
+    assert(groups[0].args.length == 4);
+    assert(groups[1].args.length == 2);
+    assert(groups[2].args.length == 1);
+}
+
 
 int main(string[] args) {
     version (unittest) {
