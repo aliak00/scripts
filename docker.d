@@ -44,7 +44,7 @@ struct CommandGroup {
     string command;
 }
 
-CommandGroup[] cmdopts(string args[]) {
+CommandGroup[] parseCommandGroups(string args[]) {
     string[] groupedArgs = [];
     CommandGroup[] commandGroups;
     for (int i = 0; i < args.length; ++i) {
@@ -78,7 +78,7 @@ CommandGroup[] cmdopts(string args[]) {
 
 unittest {
     auto args = ["cmd1", "-o1", "-o2", "cmd2", "-o3", "--o4", "val1", "cmd3", "cmd4", "--x", "val2"];
-    auto groups = cmdopts(args);
+    auto groups = parseCommandGroups(args);
     assert(groups.length == 4);
     assert(groups[0].command == "cmd1");
     assert(groups[1].command == "cmd2");
@@ -96,7 +96,7 @@ int main(string[] args) {
         return 1;
     }
 
-    auto commandGroups = cmdopts(args);
+    auto commandGroups = parseCommandGroups(args);
     if (commandGroups.length > 2) {
         writeln("Too many commands found");
         return 1;
