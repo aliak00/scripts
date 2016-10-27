@@ -39,9 +39,14 @@ void deleteDanglingImages(string[] args) {
 
 // cmd1 -o1 -o2 cmd2 -o3 --o4 val1 cmd3 cmd4 --x val2
 
-string[][] cmdopts(string args[]) {
+struct CommandGroup {
+    string[] args;
+    string command;
+}
+
+CommandGroup[] cmdopts(string args[]) {
     string[] groupedArgs = [];
-    string[][] commandGroups = [][];
+    CommandGroup[] commandGroups;
     for (int i = 0; i < args.length; ++i) {
         bool isCommand = args[i].indexOf("-") != 0;
         if (isCommand) {
@@ -52,7 +57,10 @@ string[][] cmdopts(string args[]) {
         }
         if (isCommand) {
             if (groupedArgs.length) {
-                commandGroups ~= groupedArgs;
+                CommandGroup cg;
+                cg.args = groupedArgs;
+                cg.command = groupedArgs[0];
+                commandGroups ~= cg;
             }
             groupedArgs = [args[i]];
             continue;
@@ -60,7 +68,10 @@ string[][] cmdopts(string args[]) {
         groupedArgs ~= args[i];
     }
     if (groupedArgs.length) {
-        commandGroups ~= groupedArgs;
+        CommandGroup cg;
+        cg.args = groupedArgs;
+        cg.command = groupedArgs[0];
+        commandGroups ~= cg;
     }
     return commandGroups;
 }
@@ -76,14 +87,13 @@ int main(string[] args) {
         return 1;
     }
 
-    auto command = commandGroups[1][0];
-    auto commandArgs = commandGroups[1];
-    switch (command) {
+    auto cg = commandGroups[1];
+    switch (cg.command) {
         case "delete-containers":
-            deleteContainers(commandArgs);
+            deleteContainers(cg.args);
             break;
         case "delete-dangling":
-            deleteDanglingImages(commandArgs);
+            deleteDanglingImages(cg.args);
         default:
             writeln("Invalid command");
             return 1;
