@@ -6,6 +6,8 @@ std.getopt, std.string, std.typecons, std.process, std.algorithm;
 void execute(string command) {
     writeln("Executing command: ", command);
     auto result = executeShell(command);
+
+    
     writeln(result.output);
 }
 
