@@ -1,6 +1,7 @@
 #!/usr/bin/env rdmd --compiler=ldc2
 
-import std.stdio, std.getopt, std.string, std.typecons, std.process, std.algorithm;
+import std.stdio, 
+std.getopt, std.string, std.typecons, std.process, std.algorithm;
 
 void execute(string command) {
     writeln("Executing command: ", command);
