@@ -7,12 +7,14 @@ void execute(string command) {
     writeln("Executing command: ", command);
     auto result = executeShell(command);
 
-    
+
     writeln(result.output);
 }
 
 void deleteContainers(string[] args) {
     bool force = false;
+
+    
     auto getoptResult = getopt(
         args,
         "force|f", "Delete running contianers as well", &force
